@@ -4,7 +4,7 @@
 // Get a free hosted Postgres database in seconds: `npx create-db`
 
 generator client {
-  provider = "prisma-client"
+  provider = "prisma-client-js"
   output   = "../app/generated/prisma"
 }
 
@@ -30,12 +30,12 @@ model User {
 }
 
 model Repository{
-  id           String     @id @default(cuid()) 
-  name         String
-  userId       String 
-  user         User       @relation(fields: [userId], references: [id])
-  private      Boolean    @default(false)
-  html_url     String
+  id            String     @id @default(cuid()) 
+  name          String
+  userId        String 
+  user          User       @relation(fields: [userId], references: [id])
+  private       Boolean    @default(false)
+  html_url      String
   githubRepoId  String    @unique  
   owner         String           
   status        String    @default("monitored")
@@ -57,7 +57,7 @@ model Review{
   prNumber      Int?
   repoId        String
   repo          Repository  @relation(fields: [repoId], references: [id])
-  comments       Comment[]
+  comments      Comment[]
   createdAt     DateTime    @default(now())
   updatedAt     DateTime    @updatedAt
 }
@@ -86,10 +86,10 @@ model Account {
   id_token          String?
   session_state     String?
  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
  
-  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user              User @relation(fields: [userId], references: [id], onDelete: Cascade)
  
   @@id([provider, providerAccountId])
 }
@@ -100,8 +100,8 @@ model Session {
   expires      DateTime
   user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
  
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
 model VerificationToken {

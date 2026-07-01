@@ -2,7 +2,7 @@ import { auth } from "@/auth.config"
 import { NextResponse } from "next/server"
 
 // Routes that should stay public
-const PUBLIC_ROUTES = ["/user/signin", "/api/auth"]
+const PUBLIC_ROUTES = ["/user/signin", "/api/auth","/api/webhooks"]
 
 export default auth((req: any) => {
   const { nextUrl } = req
