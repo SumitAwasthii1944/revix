@@ -3,6 +3,7 @@ import { useEffect, useState } from "react"
 import { ChevronDown, ChevronRight, Settings, Menu, GitPullRequest, Sparkles } from "lucide-react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 
 const colors = {
   background:      "#0b0f14",
@@ -99,11 +100,20 @@ export default function RevixSidebar() {
         className="flex items-center gap-3 border-b px-4 py-4"
         style={{ borderColor: colors.border, background: colors.backgroundAlt }}
       >
+        {/* Added 'relative' so the 'fill' image stays inside this 40x40px box */}
+        {/* Added 'flex-shrink-0' so flexbox doesn't squish your logo box */}
         <div
-          className="flex h-10 w-10 items-center justify-center rounded-2xl border"
+          className="relative flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl border"
           style={{ borderColor: "rgba(241,164,99,0.22)", background: colors.accentSoft, color: colors.accent }}
         >
-          <Sparkles size={16} />
+          <Image 
+            src='/revix.png' 
+            alt="revix" 
+            fill 
+            sizes="40px" 
+            className="object-contain p-1.5" 
+            priority
+          />
         </div>
         <div>
           <p className="text-[11px] uppercase tracking-[0.32em]" style={{ color: colors.textMuted }}>
@@ -115,6 +125,13 @@ export default function RevixSidebar() {
 
       {/* Repos list */}
       <nav className="flex-1 overflow-y-auto px-3 py-3">
+        <button
+          onClick={() => navigateTo('/dashboard')}
+          className="mb-2 flex w-full items-center justify-between rounded-2xl px-3 py-2"
+          style={{ color: colors.textMuted, background: colors.backgroundAlt, border: `1px solid ${colors.border}` }}
+        >
+          <span className="text-[11px] font-semibold uppercase tracking-[0.28em]">Dashboard</span>
+        </button>
         <button
           onClick={() => setReposExpanded((prev) => !prev)}
           className="mb-2 flex w-full items-center justify-between rounded-2xl px-3 py-2"
@@ -135,7 +152,7 @@ export default function RevixSidebar() {
               <RepoRow
                 key={repo.id}
                 repo={repo}
-                onSelect={(id) => navigateTo(`/repo/${id}`)}
+                onSelect={(id) => navigateTo(`/dashboard/repo/${id}`)}
               />
             ))}
           </div>

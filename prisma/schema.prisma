@@ -69,6 +69,7 @@ model Comment{
   issue       String      @db.Text
   severity    String      
   reviewId    String
+resolved      Boolean       @default(false)
   review      Review     @relation(fields: [reviewId], references: [id])
   createdAt   DateTime  @default(now())
 }

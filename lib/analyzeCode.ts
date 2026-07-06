@@ -5,7 +5,7 @@ const client = new Groq({
 })
 
 
-export async function analyzeCode(diff: string) {
+export async function analyzeCode(diff: string,validPaths: string[]) {
   const response = await client.chat.completions.create({
     model: "llama-3.3-70b-versatile",
     max_tokens:      2048,
@@ -33,6 +33,10 @@ export async function analyzeCode(diff: string) {
             }
           ]
         }
+        IMPORTANT: "fileName" must be an EXACT match to one of these paths — do not shorten, guess, or invent a path:
+        ${validPaths.map(p => `- ${p}`).join("\n")}
+
+        Only include a comment if you can confidently attach it to one of these exact paths and a line that appears in the diff below.
 
         Diff:
         ${diff}`,

@@ -1,3 +1,4 @@
+//called in settings page
 import { auth } from "@/auth"
 import {prisma} from '@/lib/prisma'
 import { Octokit } from "octokit"
@@ -108,7 +109,7 @@ export async function POST(req: Request) {
                                 content_type: "json",
                                 secret:       process.env.GITHUB_WEBHOOK_SECRET!,
                       },
-                      events: ["push", "issue_comment"],
+                      events: ["push", "issue_comment","pull_request", "repository"],
                       active: true,
             })
 
