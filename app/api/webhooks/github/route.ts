@@ -12,14 +12,14 @@ export async function POST(req :Request){
   }
   const event = req.headers.get("x-github-event");
   const body = await req.text()//why text-> webhooks.verify(body, signature) expects body to be the exact string of bytes that GitHub sent
-  const payload = JSON.parse(body)
-
+  
   if (!(await webhooks.verify(body, signature))) {
     return Response.json({
           success:false,
           message:"event not from github"
     },{status:401})
   }
+  const payload = JSON.parse(body)
 
   if(event === 'push'){
           const {head_commit, repository} = payload
@@ -68,7 +68,7 @@ export async function POST(req :Request){
 
     if (action === "deleted") {
       try {
-        await prisma.repository.deleteMany({
+        await prisma.repository.deleteMany({//delete requires you to be 100% certain exactly one row matches (it throws an error if zero rows are found). deleteMany matches zero or more rows and won't throw if nothing matches
           where: { githubRepoId: repository.id.toString() }
         })
         console.log(`Deleted repo ${repository.full_name} from database`)

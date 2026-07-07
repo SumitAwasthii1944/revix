@@ -75,13 +75,13 @@ export async function GET(
                                 per_page: 100,
                                 state: 'open',
                         }),
-                        octokit.rest.repos.listCommits({
-                                owner: repo.owner,
-                                repo: repo.name,
-                                per_page: 100,
+                        octokit.paginate(octokit.rest.repos.listCommits, {
+                        owner: repo.owner,
+                        repo: repo.name,
+                        per_page: 100,
                         }),
                 ])
-
+                console.log("commits fetched:", commitsResult.length)
                 return Response.json(
                         {
                                 success: true,
@@ -89,7 +89,7 @@ export async function GET(
                                         repo:repo,
                                         reviewCount,
                                         pull_requests: pullRequestsResult.data,
-                                        commits: commitsResult.data,
+                                        commits: commitsResult,
                                 },
                         },
                         { status: 200 }

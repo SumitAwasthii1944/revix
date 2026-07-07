@@ -125,3 +125,60 @@ export async function POST(req: Request) {
             return Response.json({ error: error.message }, { status: 500 })
           }
 }
+export async function DELETE(req: Request) {
+  // disconnect a repo
+          try {
+            const session=await auth()
+            if(!session?.user?.id){
+                      return Response.json({
+                                error:"unauthorized"
+                      },{status:401})
+            }
+            const {owner,repo} = await req.json()
+
+            // find the repo, and make sure it belongs to this user
+            const repository = await prisma.repository.findFirst({
+              where: { name: repo, owner, userId: session.user.id },
+            })
+
+            if (!repository) {
+              return Response.json({ error: "Repository not found" }, { status: 404 })
+            }
+            
+            const user = await prisma.user.findFirst({
+                      where:{
+                                id:session.user.id,
+                      },
+                      include:{accounts:true}
+            })
+
+            const githubAccessToken=user?.accounts.find((acc) => (acc.provider==="github"))?.access_token
+
+            if (!githubAccessToken) {
+                      return Response.json({ error: "No GitHub token" }, { status: 401 })
+            }
+            const octokit=new Octokit({auth:githubAccessToken})
+            // delete the webhook on GitHub, if one exists
+            if (repository.webhookId) {
+              try {
+                await octokit.rest.repos.deleteWebhook({
+                  owner,
+                  repo,
+                  hook_id: Number(repository.webhookId),
+                })
+              } catch (error) {
+                // webhook might already be gone — don't block DB cleanup because of it
+                console.error("Failed to delete GitHub webhook:", error)
+              }
+            }
+            // now remove the DB row
+            await prisma.repository.delete({
+              where: { id: repository.id },
+            })
+
+            return Response.json({ success: true }, { status: 200 })
+          } catch (error:any) {
+            console.error("Repository disconnection failed:", error)
+            return Response.json({ error: error.message }, { status: 500 })
+          }
+}

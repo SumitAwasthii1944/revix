@@ -80,6 +80,7 @@ export default function RepoDashboardPage() {
     const [latestCommitDate, setLatestCommitDate] = useState<string | Date | null>(null)
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const [commitLimit, setCommitLimit] = useState(6)
 
     const loadRepoData = useCallback(async (options?: { silent?: boolean }) => {
     if (!repoId) {
@@ -383,7 +384,7 @@ useEffect(() => {
                                     No commits were synced for this repository yet.
                                 </div>
                             ) : (
-                                commits.slice(0, 6).map((commit) => (
+                                commits.slice(0, commitLimit).map((commit) => (
                                     <div key={commit.sha} className="rounded-2xl border border-white/8 bg-white/3 p-4">
                                         <div className="flex items-start justify-between gap-4">
                                             <div>
@@ -421,7 +422,17 @@ useEffect(() => {
                                             {commit.commit?.author?.date ? `Committed ${formatDate(commit.commit.author.date)}` : "Commit date unavailable"}
                                         </p>
                                     </div>
+                                    
                                 ))
+                                
+                            )}
+                            {commits.length > commitLimit && (
+                                    <button
+                                        onClick={() => setCommitLimit((n) => n + 6)}
+                                        className="w-full rounded-2xl border border-white/8 bg-white/3 p-3 text-xs font-medium text-white/60 transition hover:border-white/20 hover:bg-white/6 hover:text-white/90"
+                                    >
+                                        Show more commits
+                                    </button>
                             )}
                         </div>
                     </section>

@@ -21,12 +21,13 @@ export default function RepoList() {
   const [error, setError] = useState<string | null>(null)
   const [query, setQuery] = useState("")
   const [connectingId, setConnectingId] = useState<number | null>(null)
+  const [disConnectingId, setDisconnectingId] = useState<number | null>(null)
   const [connectedIds, setConnectedIds] = useState<Set<number>>(new Set())
 
   const handleConnect = async (repo: Repo) => {
     setConnectingId(repo.id)
     try {
-      await axiosInstance.post("/repositories", {
+      await axiosInstance.post("/repositories", {//post() takes the body as its own, second argument — no wrapping needed.
         owner: repo.owner.login,
         repo: repo.name,
       })
@@ -36,6 +37,28 @@ export default function RepoList() {
     } finally {
       setConnectingId(null)
     }
+  }
+
+  const handleDisconnect = async (repo: Repo) => {
+      setDisconnectingId(repo.id)
+      try {
+        await axiosInstance.delete('/repositories',{//delete() (and also get()) only take two arguments total: (url, config). There's no dedicated "body" slot in the function signature, 
+          //Since Axios still needs some way to let you attach a body when you really want one, it repurposes the config object's data field for it
+          data:{
+            owner:repo.owner.login,
+            repo:repo.name
+          }
+        })
+        setConnectedIds((prev) => {
+          const next = new Set(prev)
+          next.delete(repo.id)
+          return next
+        })
+      } catch (error) {
+        console.error(error)
+      }finally{
+        setDisconnectingId(null)
+      }
   }
 
   useEffect(() => {
@@ -129,17 +152,17 @@ export default function RepoList() {
                   </div>
                 </div>
                 <button
-                  onClick={() => handleConnect(r)}
-                  disabled={isConnecting || isConnected}
+                  onClick={() => (isConnected ? handleDisconnect(r) : handleConnect(r))}
+                  disabled={isConnecting || disConnectingId === r.id}
                   className={`flex-shrink-0 flex items-center gap-1.5 text-xs font-medium px-3 py-1.5 rounded-md border transition-colors ${
                     isConnected
-                      ? "bg-white/5 border-white/10 text-zinc-500 cursor-default"
+                      ? "bg-white/5 border-white/10 text-zinc-300 hover:bg-red-500/10 hover:border-red-500/20 hover:text-red-400"
                       : "bg-transparent border-white/15 text-zinc-200 hover:bg-white/10 hover:border-white/25 disabled:opacity-60"
                   }`}
                 >
-                  {isConnected && <Check size={13} />}
-                  {isConnecting && <Loader2 size={13} className="animate-spin" />}
-                  {isConnected ? "Connected" : isConnecting ? "Connecting" : "Connect"}
+                  {isConnected && disConnectingId !== r.id && <Check size={13} />}
+                  {(isConnecting || disConnectingId === r.id) && <Loader2 size={13} className="animate-spin" />}
+                  {disConnectingId === r.id ? "Disconnecting" : isConnected ? "Connected" : isConnecting ? "Connecting" : "Connect"}
                 </button>
               </div>
             )

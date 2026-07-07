@@ -281,11 +281,11 @@ export default async function DashboardPage() {
                                     key={repo.id}
                                     className="group rounded-[1.75rem] border border-white/8 bg-black/18 p-5 transition hover:border-white/14 hover:bg-black/24"
                                 >
-                                    <div className="flex items-start justify-between gap-4">
-                                        <div>
+                                    <div className="flex min-w-0 items-start justify-between gap-4">
+                                        <div className="min-w-0">
                                             <p className="text-xs uppercase tracking-[0.28em] text-white/36">Repository</p>
-                                            <h4 className="mt-2 text-xl font-semibold text-white">{repo.owner}/{repo.name}</h4>
-                                            <p className="mt-2 text-sm leading-6 text-white/62">
+                                            <h4 className="mt-2 text-xl font-semibold text-white wrap-break-all">{repo.owner}/{repo.name}</h4>
+                                            <p className="mt-2 text-sm leading-6 text-white/62 wrap-break-words">
                                                 {repo.description ?? "No description added yet."}
                                             </p>
                                         </div>
@@ -294,14 +294,14 @@ export default async function DashboardPage() {
                                         </span>
                                     </div>
 
-                                    <div className="mt-5 flex flex-wrap gap-2 text-xs text-white/56">
-                                        <span className="rounded-full border border-white/8 bg-white/4 px-3 py-1">
+                                    <div className="mt-5 flex md:flex-row flex-col gap-2 text-xs text-white/56">
+                                        <span className="w-30 rounded-full border border-white/8 bg-white/4 px-3 py-1">
                                             Status: {repo.status}
                                         </span>
-                                        <span className="rounded-full border border-white/8 bg-white/4 px-3 py-1">
+                                        <span className="w-30 rounded-full border border-white/8 bg-white/4 px-3 py-1">
                                             Reviews: {repo._count.review}
                                         </span>
-                                        <span className="rounded-full border border-white/8 bg-white/4 px-3 py-1">
+                                        <span className="w-35 rounded-full border border-white/8 bg-white/4 px-3 py-1">
                                             Updated {formatDate(repo.updatedAt)}
                                         </span>
                                     </div>
@@ -311,12 +311,12 @@ export default async function DashboardPage() {
                                             href={repo.html_url}
                                             target="_blank"
                                             rel="noreferrer"
-                                            className="inline-flex items-center justify-center gap-2 rounded-full bg-[#f1a463] px-4 py-2.5 text-sm font-semibold text-[#101318] transition hover:-translate-y-px hover:bg-[#f5b57d]"
+                                            className="w-50 inline-flex items-center justify-center gap-2 rounded-full bg-[#f1a463] px-1.5 py-2 md:px-4 md:py-2.5 text-sm font-semibold text-[#101318] transition hover:-translate-y-px hover:bg-[#f5b57d]"
                                         >
                                             Open GitHub
                                             <ArrowRight className="h-4 w-4" />
                                         </Link>
-                                        <p className="inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-4 py-2.5 text-sm text-white/72">
+                                        <p className="w-50 inline-flex items-center justify-center rounded-full border border-white/10 bg-white/5 px-1.5 py-2 md:px-4 md:py-2.5 text-sm text-white/72">
                                             {repo.status === "monitored" ? "Auto review ready" : "Reviewing paused"}
                                         </p>
                                     </div>
