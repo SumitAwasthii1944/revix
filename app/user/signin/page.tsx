@@ -1,6 +1,10 @@
 import { signIn } from "@/auth"
 
-export default function LoginPage() {
+export default function LoginPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>
+}) {
   return (
     <main className="relative flex min-h-screen items-center justify-center overflow-hidden bg-transparent px-6">
       {/* faint grid texture */}
@@ -21,9 +25,11 @@ export default function LoginPage() {
         <div className="overflow-hidden rounded-xl border border-[#23272E] bg-[#111418] shadow-[0_0_0_1px_rgba(255,255,255,0.03),0_24px_48px_-12px_rgba(0,0,0,0.6)]">
           {/* title bar */}
           <div className="flex items-center gap-2 border-b border-[#23272E] bg-[#15181D] px-4 py-3">
-            <span className="h-2.5 w-2.5 rounded-full bg-[#3A3F47]" />
-            <span className="h-2.5 w-2.5 rounded-full bg-[#3A3F47]" />
-            <span className="h-2.5 w-2.5 rounded-full bg-[#3A3F47]" />
+            <div className="flex gap-1.5">
+              <span className="h-2.5 w-2.5 rounded-full bg-[#3A3F47]" />
+              <span className="h-2.5 w-2.5 rounded-full bg-[#3A3F47]" />
+              <span className="h-2.5 w-2.5 rounded-full bg-[#3A3F47]" />
+            </div>
             <span className="ml-2 font-mono text-[11px] tracking-wide text-[#5C6370]">
               ~/auth/sign-in
             </span>
@@ -44,6 +50,9 @@ export default function LoginPage() {
                 Authenticate with your GitHub account to access your workspace.
               </p>
             </div>
+
+            {/* Error Message */}
+            <ErrorMessage searchParams={searchParams} />
 
             <form
               action={async () => {
@@ -87,5 +96,46 @@ export default function LoginPage() {
         </p>
       </div>
     </main>
+  )
+}
+
+async function ErrorMessage({
+  searchParams,
+}: {
+  searchParams: Promise<{ error?: string }>
+}) {
+  const { error } = await searchParams
+
+  if (!error) return null
+
+  const errorMessages: Record<string, string> = {
+    OAuthAccountNotLinked: "An account with this email already exists. Try signing in with your original method or link your accounts.",
+    OAuthCallback: "There was a problem with the OAuth callback. Please try again.",
+    OAuthSignin: "Could not start the sign-in process. Please try again.",
+    default: "An unexpected authentication error occurred.",
+  }
+
+  const message = errorMessages[error] || errorMessages.default
+
+  return (
+    <div className="mb-6 flex items-start gap-3 rounded-lg border border-red-500/20 bg-red-500/5 p-4">
+      <svg
+        className="mt-0.5 h-4 w-4 shrink-0 text-red-400"
+        fill="none"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path
+          strokeLinecap="round"
+          strokeLinejoin="round"
+          strokeWidth={2}
+          d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        />
+      </svg>
+      <div className="flex flex-col gap-1">
+        <span className="text-[13px] font-medium text-red-200">Authentication Error</span>
+        <p className="text-[12px] leading-relaxed text-red-400/80">{message}</p>
+      </div>
+    </div>
   )
 }

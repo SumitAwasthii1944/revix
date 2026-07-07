@@ -8,6 +8,10 @@ export default auth((req: any) => {
   const { nextUrl } = req
   const isLoggedIn = !!req.auth
 
+  if (nextUrl.pathname.startsWith("/api/")) {
+    return NextResponse.next()
+  }
+
   const isPublicRoute = PUBLIC_ROUTES.some((route) =>
     nextUrl.pathname.startsWith(route)
   )

@@ -4,6 +4,7 @@ import { ChevronDown, ChevronRight, Settings, Menu, GitPullRequest, Sparkles } f
 import { useRouter } from "next/navigation"
 import Link from "next/link"
 import Image from "next/image"
+import revix from '@/public/revix.png'
 
 const colors = {
   background:      "#0b0f14",
@@ -58,6 +59,15 @@ export default function RevixSidebar() {
     async function loadRepos() {
       try {
         const res  = await fetch("/api/dashboard/repos")
+        if (!res.ok) {
+          return
+        }
+
+        const contentType = res.headers.get("content-type") ?? ""
+        if (!contentType.includes("application/json")) {
+          return
+        }
+
         const data = await res.json()
         setRepos(data.data ?? [])
       } catch (err) {
@@ -107,11 +117,11 @@ export default function RevixSidebar() {
           style={{ borderColor: "rgba(241,164,99,0.22)", background: colors.accentSoft, color: colors.accent }}
         >
           <Image 
-            src='/revix.png' 
+            src={revix} 
             alt="revix" 
             fill 
             sizes="40px" 
-            className="object-contain p-1.5" 
+            className="object-contain p-1.5 rounded-full" 
             priority
           />
         </div>
