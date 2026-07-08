@@ -88,6 +88,19 @@ export async function POST(req: Request) {
                       repo
             })
 
+            //create webhook
+            const webhook = await octokit.rest.repos.createWebhook({
+                      owner:owner,
+                      repo:repo,
+                      config: {
+                                url:          `${process.env.APP_URL}/api/webhooks/github`,
+                                content_type: "json",
+                                secret:       process.env.GITHUB_WEBHOOK_SECRET!
+                      },
+                      events: ["push", "issue_comment","pull_request", "repository"],
+                      active: true,
+            })
+
             await prisma.repository.create({
                       data: {      
                         name:         repo,
@@ -98,19 +111,6 @@ export async function POST(req: Request) {
                         private:      repoDetails.data.private,
                         userId:       session.user.id,
                       }
-            })
-
-            //create webhook
-            const webhook = await octokit.rest.repos.createWebhook({
-                      owner:owner,
-                      repo:repo,
-                      config: {
-                                url:          `${process.env.APP_URL}/api/webhooks/github`,
-                                content_type: "json",
-                                secret:       process.env.GITHUB_WEBHOOK_SECRET!,
-                      },
-                      events: ["push", "issue_comment","pull_request", "repository"],
-                      active: true,
             })
 
             // save webhookId to repository

@@ -20,7 +20,7 @@ export async function GET(req: Request) {
     if (!repos || repos.length === 0) {
       return Response.json(
         { success: false, data: "No repos found" },
-        { status: 404 }
+        { status: 401 }
       );
     }
 

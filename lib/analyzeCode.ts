@@ -49,6 +49,6 @@ export async function analyzeCode(diff: string,validPaths: string[]) {
   try {
     return JSON.parse(text)
   } catch {
-    throw new Error(`xAI returned invalid JSON: ${text}`)
+    throw new Error(`grok returned invalid JSON: ${text}`)
   }
 }

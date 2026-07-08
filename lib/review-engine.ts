@@ -73,7 +73,7 @@ export async function triggerReview(values: triggerData) {
   let filenames: string[] = []
 
   if (sha) {
-    const { data } = await octokit.rest.repos.getCommit({
+    const { data } = await octokit.rest.repos.getCommit({// the diff text to send to the AI
       owner,
       repo,
       ref: sha,
@@ -82,7 +82,7 @@ export async function triggerReview(values: triggerData) {
     diff = data as unknown as string
 
     // still need valid filenames for the sha case so analyzeCode is constrained
-    const { data: commitData } = await octokit.rest.repos.getCommit({
+    const { data: commitData } = await octokit.rest.repos.getCommit({//the real filenames to validate the AI's answer against.
       owner,
       repo,
       ref: sha,
