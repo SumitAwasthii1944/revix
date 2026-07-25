@@ -46,8 +46,9 @@ function resolvePaths(comments: RawComment[], filenames: string[]) {
   return { resolved, unresolved }
 }
 
-export async function triggerReview(values: triggerData) {
+export async function triggerReview(values: triggerData,onProgress?: (step: string) => void) {
 
+  onProgress?.("finding repository...")
   const repository = await prisma.repository.findFirst({
     where:   { name: values.repo, owner: values.owner },
     include: { user: { include: { accounts: true } } },
@@ -72,6 +73,8 @@ export async function triggerReview(values: triggerData) {
   let diff: string | undefined
   let filenames: string[] = []
 
+  onProgress?.("fetching diff from github...")
+
   if (sha) {
     const { data } = await octokit.rest.repos.getCommit({// the diff text to send to the AI
       owner,
@@ -90,6 +93,7 @@ export async function triggerReview(values: triggerData) {
     filenames = (commitData.files ?? []).map((f) => f.filename)
 
   } else if (prNumber) {
+    onProgress?.("fetching diff from github")
     const { data: files } = await octokit.rest.pulls.listFiles({
       owner,
       repo,
@@ -107,6 +111,7 @@ export async function triggerReview(values: triggerData) {
   }
 
   // analyze ONCE, constrained to real paths
+  onProgress?.("analyzing code...")
   const analysis = await analyzeCode(diff, filenames)
 
   // resolve/validate paths BEFORE saving to DB, so DB reflects reality
@@ -118,6 +123,7 @@ export async function triggerReview(values: triggerData) {
 
   // save to DB ONCE — store resolved comments with their exact path,
   // and unresolved ones flagged so they're visible, not silently lost
+  onProgress?.("saving review...")
   const savedReview = await prisma.review.create({
     data: {
       bugScore:      analysis.bugScore,
@@ -162,7 +168,7 @@ export async function triggerReview(values: triggerData) {
           unresolved.map((c) => `- \`${c.fileName}\` line ${c.line}: ${c.issue}`).join("\n")
         )
       }
-
+      onProgress?.("posting feedback to github...")
       await octokit.rest.repos.createCommitComment({
         owner,
         repo,
@@ -171,6 +177,7 @@ export async function triggerReview(values: triggerData) {
       })
 
     } else if (prNumber) {
+      onProgress?.("posting feedback to github...")
       if (resolved.length > 0) {
         await octokit.rest.pulls.createReview({
           owner,

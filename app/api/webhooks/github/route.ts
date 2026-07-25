@@ -1,6 +1,6 @@
 import { Webhooks } from "@octokit/webhooks";
-import { triggerReview } from "@/lib/review-engine";
 import {prisma} from "@/lib/prisma"
+import { addJob } from "@/lib/queue";
 const webhooks = new Webhooks({
   secret: process.env.GITHUB_WEBHOOK_SECRET!,
 });
@@ -29,7 +29,7 @@ export async function POST(req :Request){
               const owner=repository.owner.login
               const sha= payload.after
               const repo=repository.name
-              triggerReview({sha,owner,repo}).catch(console.error)
+              addJob({ sha, owner, repo }).catch(console.error)
           }
   }
   if (event === "pull_request") {
@@ -43,7 +43,7 @@ export async function POST(req :Request){
         const repo     = repository.name
         const prNumber = pull_request.number
 
-        triggerReview({ prNumber, owner, repo }).catch(console.error)
+        addJob({ prNumber, owner, repo }).catch(console.error)
       }
     }
   }
@@ -60,7 +60,7 @@ export async function POST(req :Request){
       const repo=repository.name
       const prNumber=issue.number
 
-      triggerReview({ prNumber, owner, repo }).catch(console.error)
+      addJob({ prNumber, owner, repo }).catch(console.error)
     }
   }
   if (event === "repository") {

@@ -1,6 +1,6 @@
-import { triggerReview } from "@/lib/review-engine"
 import {auth} from '@/auth'
 import { prisma } from "@/lib/prisma"
+import { addJob } from "@/lib/queue"
 
 export async function POST(req:Request){
           const session = await auth()
@@ -28,7 +28,7 @@ export async function POST(req:Request){
                     return Response.json({ error: "Repository not found" }, { status: 404 })
           }
           
-          triggerReview({ sha, prNumber, owner, repo }).catch(console.error)
+          await addJob({sha, prNumber, owner, repo})
 
           return Response.json({ success: true, message: "Review queued" })
 }

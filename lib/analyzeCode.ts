@@ -1,11 +1,17 @@
 import Groq from "groq-sdk"
 
-const client = new Groq({
-  apiKey: process.env.GROQ_API_KEY!,
-})
-
 
 export async function analyzeCode(diff: string,validPaths: string[]) {
+  const apiKey = process.env.GROQ_API_KEY
+
+  if (!apiKey) {
+    throw new Error("GROQ_API_KEY is missing")
+  }
+
+  const client = new Groq({
+    apiKey,
+  })
+
   const response = await client.chat.completions.create({
     model: "llama-3.3-70b-versatile",
     max_tokens:      2048,
