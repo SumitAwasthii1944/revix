@@ -125,6 +125,7 @@ export async function POST(req: Request) {
             return Response.json({ error: error.message }, { status: 500 })
           }
 }
+
 export async function DELETE(req: Request) {
   // disconnect a repo
           try {
@@ -138,7 +139,7 @@ export async function DELETE(req: Request) {
 
             // find the repo, and make sure it belongs to this user
             const repository = await prisma.repository.findFirst({
-              where: { name: repo, owner, userId: session.user.id },
+                where: { name: repo, owner, userId: session.user.id },
             })
 
             if (!repository) {

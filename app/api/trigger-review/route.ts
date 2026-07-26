@@ -5,9 +5,8 @@ import { addJob } from "@/lib/queue"
 export async function POST(req:Request){
           const session = await auth()
           if (!session?.user?.id) {
-          return Response.json({ error: "Unauthorized" }, { status: 401 })
+                    return Response.json({ error: "Unauthorized" }, { status: 401 })
           }
-
 
           const body =await req.json()
           const { sha, prNumber, owner, repo } = body

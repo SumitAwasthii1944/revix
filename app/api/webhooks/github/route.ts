@@ -23,7 +23,7 @@ export async function POST(req :Request){
 
   if(event === 'push'){
           const {head_commit, repository} = payload
-          if (head_commit?.message.includes("[review]")){
+          if (head_commit?.message.includes("/review")){
               // trigger commit review
               // pass: sha, owner, repo
               const owner=repository.owner.login

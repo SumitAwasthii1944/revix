@@ -28,19 +28,6 @@ export async function GET(
                         )
                 }
 
-                const repo = await prisma.repository.findFirst({
-                        where: {
-                                id: repoId,
-                                userId,
-                        },
-                })
-
-                if (!repo) {
-                        return Response.json(
-                                { success: false, error: "Repo not found" },
-                                { status: 404 }
-                        )
-                }
 
                 const user = await prisma.user.findFirst({
                         where: {
@@ -61,6 +48,20 @@ export async function GET(
                         )
                 }
 
+                const repo = await prisma.repository.findFirst({
+                        where: {
+                                id: repoId,
+                                userId,
+                        },
+                })
+
+                if (!repo) {
+                        return Response.json(
+                                { success: false, error: "Repo not found" },
+                                { status: 404 }
+                        )
+                }
+                
                 const octokit = new Octokit({ auth: githubAccessToken })
                 const reviewCount = await prisma.review.count({
                         where: {
@@ -69,7 +70,7 @@ export async function GET(
                 })
 
                 const [pullRequestsResult, commitsResult] = await Promise.all([
-                        octokit.rest.pulls.list({
+                        octokit.paginate(octokit.rest.pulls.list,{
                                 owner: repo.owner,
                                 repo: repo.name,
                                 per_page: 100,
@@ -88,7 +89,7 @@ export async function GET(
                                 data: {
                                         repo:repo,
                                         reviewCount,
-                                        pull_requests: pullRequestsResult.data,
+                                        pull_requests: pullRequestsResult,
                                         commits: commitsResult,
                                 },
                         },
