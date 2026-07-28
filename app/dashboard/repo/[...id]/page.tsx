@@ -66,7 +66,7 @@ export default function RepoDashboardPage() {
         const rawId = params?.id
         return Array.isArray(rawId) ? rawId[0] : rawId
     }, [params])
-
+    const router=useRouter()
     const [pulls, setPulls] = useState<PullRequest[]>([])
     const [commits, setCommits] = useState<Commit[]>([])
     const [repoName, setRepoName] = useState<string>("Repository detail")
@@ -155,6 +155,9 @@ useEffect(() => {
                 description:'Revix has started reviewing your pull_request',
                 variant:'success'
             })
+
+            router.push(`/review/${repoOwner}/${repoName}/pr/${prNumber}`)
+
             void loadRepoData({ silent: true })
         } catch (error) {
             toast({
@@ -172,6 +175,9 @@ useEffect(() => {
                 description:'Revix has started reviewing your commit',
                 variant:'success'
             })
+
+            router.push(`/review/${repoOwner}/${repoName}/sha/${sha}`)
+
             void loadRepoData({ silent: true })
         } catch (error) {
             toast({

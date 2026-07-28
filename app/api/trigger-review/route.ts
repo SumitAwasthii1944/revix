@@ -28,6 +28,7 @@ export async function POST(req:Request){
           }
           
           await addJob({sha, prNumber, owner, repo})
+          
 
           return Response.json({ success: true, message: "Review queued" })
 }

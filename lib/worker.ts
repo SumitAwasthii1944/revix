@@ -1,14 +1,14 @@
-import {tryCatch, Worker} from "bullmq"
+import {Worker} from "bullmq"
 import { redis } from "./redis"
 import { emitToRoom } from "./socket"
 import { triggerReview } from "./review-engine"
 
 export function startWorker(){
           const worker=new Worker(
-                    "reviews",
-                    async (job) => {
+                    "review",
+                    async (job) => { 
                               const {sha, prNumber,owner,repo} =job.data
-                              const roomId = `room:${owner}:${repo}:${sha ?? prNumber}`
+                              const roomId = `review:${owner}:${repo}:${prNumber ?? sha}`
 
                               try {
                                         emitToRoom(roomId,"review:started",{
