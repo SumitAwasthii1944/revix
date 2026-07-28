@@ -22,6 +22,6 @@ app.prepare().then(() => {
   startWorker()
 
   httpServer.listen(3000, () => {
-    console.log(`Revix running on http://localhost:3000`)
+    console.log(`Revix running on port 3000`)
   })
 })
