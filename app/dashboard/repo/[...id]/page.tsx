@@ -189,7 +189,7 @@ useEffect(() => {
     }
 
     return (
-        <main className="relative min-h-screen overflow-hidden bg-[#0b0f14] text-[#f5f1ea]">
+        <main className="relative min-h-screen overflow-x-hidden bg-[#0b0f14] text-[#f5f1ea]">
             <div
                 className="absolute inset-0"
                 style={{
@@ -332,16 +332,16 @@ useEffect(() => {
                             ) : (
                                 pulls.map((pullRequest) => (
                                     <article key={pullRequest.number ?? pullRequest.title} className="rounded-2xl border border-white/8 bg-white/3 p-4">
-                                        <div className="flex items-start justify-between gap-4">
-                                            <div>
+                                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                            <div className="min-w-0">
                                                 <p className="text-xs uppercase tracking-[0.24em] text-white/40">PR #{pullRequest.number ?? "?"}</p>
                                                 <h4 className="mt-2 text-sm font-semibold text-white">{pullRequest.title ?? "Untitled pull request"}</h4>
                                                 <p className="mt-2 text-xs text-white/48">
                                                     {pullRequest.user?.login ? `Opened by ${pullRequest.user.login}` : "Pull request author unavailable"}
                                                 </p>
                                             </div>
-                                            
-                                            <div className="flex flex-row gap-1">
+
+                                            <div className="flex flex-wrap gap-1 sm:shrink-0 sm:justify-end">
                                                 <Link
                                                     href={pullRequest.html_url ?? repoHtmlUrl ?? `/dashboard/repo/${repoId}`}
                                                     target="_blank"
@@ -392,8 +392,8 @@ useEffect(() => {
                             ) : (
                                 commits.slice(0, commitLimit).map((commit) => (
                                     <div key={commit.sha} className="rounded-2xl border border-white/8 bg-white/3 p-4">
-                                        <div className="flex items-start justify-between gap-4">
-                                            <div>
+                                        <div className="flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
+                                            <div className="min-w-0">
                                                 <p className="text-xs uppercase tracking-[0.24em] text-white/40">
                                                     {commit.sha ? commit.sha.slice(0, 7) : "Commit"}
                                                 </p>
@@ -404,8 +404,8 @@ useEffect(() => {
                                                     {commit.commit?.author?.name ?? "Unknown author"}
                                                 </p>
                                             </div>
-                                            
-                                            <div className="flex flex-row gap-1">
+
+                                            <div className="flex flex-wrap gap-1 sm:shrink-0 sm:justify-end">
                                                 <Link
                                                     href={commit.html_url ?? repoHtmlUrl ?? `/dashboard/repo/${repoId}`}
                                                     target="_blank"
