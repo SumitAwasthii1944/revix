@@ -8,28 +8,33 @@ on:
 
 jobs:
           typecheck:
-                    # type check 
-                    name: Typescript
-                    runs-on: ubuntu-latest
-                    steps:
-                           -  name: checkout code
-                              uses: actions/checkout@v4
+            name: Typescript
+            runs-on: ubuntu-latest
+            steps:
+              - name: checkout code
+                uses: actions/checkout@v4
 
-                           -  name: setup nodejs
-                              uses: actions/setup-node@v4
-                              with:
-                                        node-version: 22
-                                        cache: npm
-                              
-                           -  name: install dependencies
-                              run: npm ci 
+              - name: setup nodejs
+                uses: actions/setup-node@v4
+                with:
+                  node-version: 22
+                  cache: npm
 
-                           -  name: generate prisma client
-                              run: npx prisma generate
-                              env:
-                                        DATABASE_URL: ${{secrets.DATABASE_URL}}
-                           -  name: run type check
-                              run: npx tsc --noEmit
+              - name: install dependencies
+                run: npm ci
+
+              - name: generate prisma client
+                run: npx prisma generate
+                env:
+                  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+              - name: Generate Next.js types
+                run: npx next build --no-lint
+                env:
+                  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+
+              - name: run type check
+                run: npx tsc --noEmit
 
           #Lint
 
