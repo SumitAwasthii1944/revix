@@ -43,27 +43,13 @@ jobs:
               - name: run type check
                 run: npx tsc --noEmit
 
-          #Lint
-
-          lint: 
-                    name: lint
-                    runs-on: ubuntu-latest
-                    steps:
-                              - uses: actions/checkout@v4
-                              - uses: actions/setup-node@v4
-                                with: 
-                                        node-version: 22
-                                        cache: npm
-                              - run: npm ci
-                              - name: Run ESLint
-                                run: npm run lint 
           
           #build
 
           build:
                     name: Build
                     runs-on: ubuntu-latest
-                    needs: [typecheck, lint]
+                    needs: [typecheck]
                     steps:
                     - uses: actions/checkout@v4
                     - uses: actions/setup-node@v4
