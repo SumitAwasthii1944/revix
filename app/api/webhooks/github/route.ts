@@ -2,7 +2,7 @@ import { Webhooks } from "@octokit/webhooks";
 import {prisma} from "@/lib/prisma"
 import { addJob } from "@/lib/queue";
 const webhooks = new Webhooks({
-  secret: process.env.GITHUB_WEBHOOK_SECRET!,
+  secret: process.env.WEBHOOK_SECRET!,
 });
 
 export async function POST(req :Request){
