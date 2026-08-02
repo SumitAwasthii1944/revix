@@ -1,9 +1,6 @@
 import { Webhooks } from "@octokit/webhooks";
 import {prisma} from "@/lib/prisma"
 import { addJob } from "@/lib/queue";
-const webhooks = new Webhooks({
-  secret: process.env.GITHUB_WEBHOOK_SECRET!,
-});
 
 export async function POST(req :Request){
   const signature = req.headers.get("x-hub-signature-256");
@@ -12,6 +9,13 @@ export async function POST(req :Request){
   }
   const event = req.headers.get("x-github-event");
   const body = await req.text()//why text-> webhooks.verify(body, signature) expects body to be the exact string of bytes that GitHub sent
+  const webhookSecret = process.env.GITHUB_WEBHOOK_SECRET;
+  if (!webhookSecret) {
+    return Response.json({ error: "Webhook secret is not configured" }, { status: 500 })
+  }
+  const webhooks = new Webhooks({
+    secret: webhookSecret,
+  });
   
   if (!(await webhooks.verify(body, signature))) {
     return Response.json({
