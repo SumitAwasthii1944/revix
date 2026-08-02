@@ -37,7 +37,7 @@ jobs:
                   AUTH_GITHUB_ID:        ${{ secrets.AUTH_GITHUB_ID }}
                   AUTH_GITHUB_SECRET:    ${{ secrets.AUTH_GITHUB_SECRET }}
                   GROQ_API_KEY:          ${{ secrets.GROQ_API_KEY }}
-                  WEBHOOK_SECRET:        ${{ secrets.WEBHOOK_SECRET }}
+                  GITHUB_WEBHOOK_SECRET: ${{ secrets.WEBHOOK_SECRET }}
                   APP_URL:               ${{ secrets.APP_URL }}
 
               - name: run type check
