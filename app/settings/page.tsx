@@ -96,7 +96,7 @@ export default function RepoList() {
 
   if (loading) {
     return (
-      <div className="flex items-center gap-2 px-4 py-8 text-sm ">
+      <div className="flex items-center gap-2 px-4 py-8 text-sm text-zinc-500">
         <Loader2 size={15} className="animate-spin" />
         Loading repositories…
       </div>
