@@ -4,7 +4,7 @@ import { Octokit } from 'octokit'
 
 export async function GET(
   req: Request,
-        { params }: { params: { id: string[] | string } | Promise<{ id: string[] | string }> }  //array not string
+        { params }: { params: Promise<{ id: string }> }
 ) {
         try {
                 const resolvedParams = await params
